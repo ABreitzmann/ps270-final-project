@@ -11,4 +11,4 @@ output:
 
 ## Project thoughts
 
-I am interested in exploring data related to campaign financing, specifically where the money comes from and its relation to voting patterns. 
+I am interested in exploring data related to campaign financing, specifically where the money comes from and its relation to voting patterns. Either what groups vote for the candidate based on fiancing or how the candidate votes once in office
