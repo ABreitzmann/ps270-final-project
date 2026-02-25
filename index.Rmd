@@ -12,3 +12,7 @@ output:
 ## Project thoughts
 
 I am interested in exploring data related to campaign financing, specifically where the money comes from and its relation to voting patterns. Either what groups vote for the candidate based on financing or how the candidate votes once in office.
+
+Research Question: How does the average size of donation impact the electability of candidates?
+
+My hypothesis is smaller donation sizes result in an higher chance of candidates being elected due to increased mobilization. When donations are made up of more individuals at smaller sizes, as opposed to fewer, larger donations, more voters are engaged in the election process, thus are more likely to vote for the grassroots candidate.
