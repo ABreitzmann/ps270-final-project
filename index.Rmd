@@ -11,8 +11,16 @@ output:
 
 ## Project thoughts
 
-I am interested in exploring data related to campaign financing, specifically where the money comes from and its relation to voting patterns. Either what groups vote for the candidate based on financing or how the candidate votes once in office.
+I am interested in exploring data related to campaign financing, specifically where the money comes from and its relation to electability. Either in terms of ideology of those donations or the size of the donation themselves.
 
 Research Question: How does the average size of donation impact the electability of candidates?
 
 My hypothesis is smaller donation sizes result in an higher chance of candidates being elected due to increased mobilization. When donations are made up of more individuals at smaller sizes, as opposed to fewer, larger donations, more voters are engaged in the election process, thus are more likely to vote for the grassroots candidate.
+
+The treatment variable will be average size of donation during the campaign period. Using candidates with randomized ideologies yet different donation sizes will help to allow for causal inference.
+
+The outcome variable will be the final favorability of the candidates. By measuring the favorability over time using randomized individuals of varying ideologies as different donations come in, the differences in differences approach will allow for causal inference. 
+
+The result of candidates with smaller average donations gaining popularity over time while larger average donations lose popularity overtime would prove my hypothesis correct. Should there be no meaningful correlation between donation size and favorability, or larger donations result in higher favorability, than my hypothesis would be proven incorrect.
+
+
