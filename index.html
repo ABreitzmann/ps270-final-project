@@ -116,7 +116,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.17/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["data/Large vs. Small Donations, Current General Election Candidates, 2024 Cycle.csv","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.30/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1545,8 +1545,31 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 <div class="d-article">
 <h2 id="project-thoughts">Project thoughts</h2>
-<p>I am interested in exploring data related to campaign financing, specifically where the money comes from and its relation to voting patterns. Either what groups vote for the candidate based on financing or how the candidate votes once in office.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>I am interested in exploring data related to campaign financing, specifically where the money comes from and its relation to electability. Either in terms of ideology of those donations or the size of the donation themselves.</p>
+<p>Research Question: How does the average size of donation impact the electability of candidates?</p>
+<p>My hypothesis is smaller donation sizes result in an higher chance of candidates being elected due to increased mobilization. When donations are made up of more individuals at smaller sizes, as opposed to fewer, larger donations, more voters are engaged in the election process, thus are more likely to vote for the grassroots candidate.</p>
+<p>The treatment variable will be average size of donation during the campaign period. Using candidates with randomized ideologies yet different donation sizes will help to allow for causal inference.</p>
+<p>The outcome variable will be the final favorability of the candidates. By measuring the favorability over time using randomized individuals of varying ideologies as different donations come in, the differences in differences approach will allow for causal inference.</p>
+<p>The result of candidates with smaller average donations gaining popularity over time while larger average donations lose popularity overtime would prove my hypothesis correct. Should there be no meaningful correlation between donation size and favorability, or larger donations result in higher favorability, than my hypothesis would be proven incorrect.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Donations</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"data/Large vs. Small Donations, Current General Election Candidates, 2024 Cycle.csv"</span><span class='op'>)</span></span>
+<span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>Donations</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code># A tibble: 6 × 5
+  Name    `Total Raised` Total from Small Don…¹ Percent from Small D…²
+  &lt;chr&gt;   &lt;chr&gt;          &lt;chr&gt;                  &lt;chr&gt;                 
+1 Wright… $10528         $10299                 97.82%                
+2 CallJa… $76694         $73521                 95.86%                
+3 Housto… $7033          $6733                  95.73%                
+4 Murphy… $1507          $1432                  95.02%                
+5 DevoeM… $10395         $9675                  93.07%                
+6 Miller… $245           $222                   90.59%                
+# ℹ abbreviated names: ¹​`Total from Small Donors`,
+#   ²​`Percent from Small Donors*`
+# ℹ 1 more variable: `total money raised` &lt;chr&gt;</code></pre>
+</div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

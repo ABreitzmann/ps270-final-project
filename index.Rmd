@@ -22,5 +22,13 @@ The treatment variable will be average size of donation during the campaign peri
 The outcome variable will be the final favorability of the candidates. By measuring the favorability over time using randomized individuals of varying ideologies as different donations come in, the differences in differences approach will allow for causal inference. 
 
 The result of candidates with smaller average donations gaining popularity over time while larger average donations lose popularity overtime would prove my hypothesis correct. Should there be no meaningful correlation between donation size and favorability, or larger donations result in higher favorability, than my hypothesis would be proven incorrect.
+```{r include = FALSE}
+library(tidyverse)
+```
 
+
+```{r}
+Donations <- read_csv("data/Large vs. Small Donations, Current General Election Candidates, 2024 Cycle.csv")
+head(Donations)
+```
 
