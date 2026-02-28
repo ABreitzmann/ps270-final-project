@@ -13,15 +13,10 @@ output:
 
 I am interested in exploring data related to campaign financing, specifically where the money comes from and its relation to electability. Either in terms of ideology of those donations or the size of the donation themselves.
 
-Research Question: How does the average size of donation impact the electability of candidates?
+Research Question: How does the size of donation impact the electability of candidates?
 
-My hypothesis is smaller donation sizes result in an higher chance of candidates being elected due to increased mobilization. When donations are made up of more individuals at smaller sizes, as opposed to fewer, larger donations, more voters are engaged in the election process, thus are more likely to vote for the grassroots candidate.
+Does size of donations impact a candidates electability? In this study, I plan to analyze the extent in which the percent of campaign donations from individuals under $200 influences the final election results. I hypothesize that a higher percent of small donations will result in a larger percent of the vote share. Those with a greater amount of smaller donations are better able to mobilize and attract a larger amount of individuals donating, whereas those with large donations focus more so on PACs and lobbying groups which can not cast a ballot when the time comes. My sample includes the House and Senate nominees from the 2024 Election. My explanatory variable is the percentage of total donations coming from donations of 200 dollars or less. The variable will be split into ranges of 25%. My outcome variable will be the average percentage of vote share. If a positive correlation is found between percentage of small donations and percent of vote share, this would support my hypothesis. However, if larger donations result in higher voteshare, than my hypothesis would be incorrect.
 
-The treatment variable will be average size of donation during the campaign period. Using candidates with randomized ideologies yet different donation sizes will help to allow for causal inference.
-
-The outcome variable will be the final favorability of the candidates. By measuring the favorability over time using randomized individuals of varying ideologies as different donations come in, the differences in differences approach will allow for causal inference. 
-
-The result of candidates with smaller average donations gaining popularity over time while larger average donations lose popularity overtime would prove my hypothesis correct. Should there be no meaningful correlation between donation size and favorability, or larger donations result in higher favorability, than my hypothesis would be proven incorrect.
 ```{r include = FALSE}
 library(tidyverse)
 ```
@@ -30,5 +25,8 @@ library(tidyverse)
 ```{r}
 Donations <- read_csv("data/Large vs. Small Donations, Current General Election Candidates, 2024 Cycle.csv")
 head(Donations)
+Vote_Share <- read_csv("data/Nominees-2024.csv") |>
+  select(Nominee, Race, Type, Party, Votes, Share, Total)
+head(Vote_Share)
 ```
 
