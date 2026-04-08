@@ -22,21 +22,18 @@ library(tidyverse)
 ```
 
 
-```{r include = FALSE}
+```{r}
 Donations <- read_csv("data/Large vs. Small Donations, Current General Election Candidates, 2024 Cycle.csv")
 head(Donations)
 Vote_Share <- read_csv("data/Nominees-2024.csv") |>
   select(Nominee, Race, Type, Party, Votes, Share, Total)
 head(Vote_Share)
 ```
-```{r include = FALSE}
-Donations
-Vote_Share
-```
 
 
 
-```{r include = FALSE}
+
+```{r}
 Donations |>
   mutate(
     clean_name = str_replace(Name, " \\(.\\)", ""),
@@ -46,7 +43,7 @@ Donations |>
  # write_csv("donation.csv")
 ```
 
-```{r include = FALSE}
+```{r}
 Vote_Share |>
   mutate(clean.name = str_replace(Nominee, ".* ", ""),
          .before = Nominee) #|>
@@ -58,7 +55,7 @@ clean_Donations <- read_csv("donation.csv")
 clean_Vote_Share <- read_csv("vote.csv")
 ```
 
-```{r include = FALSE}
+```{r}
 Vote_Link <- Vote_Share |>
   inner_join(clean_Vote_Share)
 Donation_Link <- Donations |>
@@ -66,12 +63,11 @@ Donation_Link <- Donations |>
 Data <- Donation_Link |>
   inner_join(Vote_Link)
 ```
-```{r include = FALSE}
+```{r}
 Data <- Data |>
   mutate(Percent_Small_Donors = str_replace(`Percent from Small Donors*`,"%",""), .before = `total money raised`) |>
   mutate(Percent_Small_Donors = as.integer(Percent_Small_Donors)) |>
   mutate(`Total from Small Donors` = str_replace(`Total from Small Donors`, "$",""))
-Data
 ```
 
 
@@ -83,10 +79,9 @@ Data <- Data |>
                                    Total_Small > 10000 & Total_Small < 100000 ~ "2. Between $10,000 and $100,000 Raised",
                                    Total_Small > 50000 & Total_Small < 10000000 ~ "3. Between $100,000 and $1,000,000 Raised",
                                    Total_Small > 1000000 ~ "4. Over $1,000,000 Raised"))
-Data
 ```
 
-```{r include = FALSE}
+```{r}
 Data <- Data |>
   mutate(PercentSmall = case_when(Percent_Small_Donors < 10 ~ "1. Less than 10% from Small Donors",
                                   Percent_Small_Donors >= 10 & Percent_Small_Donors < 25 ~ "2. Between 10% and 25% from Small Donors",

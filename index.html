@@ -116,7 +116,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/Large vs. Small Donations, Current General Election Candidates, 2024 Cycle.csv","data/Nominees-2024.csv","donation.csv","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-11-1.png","index_files/figure-html5/unnamed-chunk-12-1.png","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.30/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","test.csv","vote.csv"]}
+  {"type":"character","attributes":{},"value":["data/Large vs. Small Donations, Current General Election Candidates, 2024 Cycle.csv","data/Nominees-2024.csv","donation.csv","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-10-1.png","index_files/figure-html5/unnamed-chunk-11-1.png","index_files/figure-html5/unnamed-chunk-12-1.png","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.30/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","test.csv","vote.csv"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1550,6 +1550,141 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <p>Does size of donations impact a candidates electability? In this study, I plan to analyze the extent in which the percent of campaign donations from individuals under $200 influences the final election results. I hypothesize that a higher percent of small donations will result in a larger percent of the vote share. Those with a greater amount of smaller donations are better able to mobilize and attract a larger amount of individuals donating, whereas those with large donations focus more so on PACs and lobbying groups which can not cast a ballot when the time comes. My sample includes the House and Senate nominees from the 2024 Election. My explanatory variable is the percentage of total donations coming from donations of 200 dollars or less. The variable will be split into ranges of 25%. My outcome variable will be the average percentage of vote share. If a positive correlation is found between percentage of small donations and percent of vote share, this would support my hypothesis. However, if larger donations result in higher voteshare, than my hypothesis would be incorrect.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Donations</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"data/Large vs. Small Donations, Current General Election Candidates, 2024 Cycle.csv"</span><span class='op'>)</span></span>
+<span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>Donations</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code># A tibble: 6 × 5
+  Name    `Total Raised` Total from Small Don…¹ Percent from Small D…²
+  &lt;chr&gt;   &lt;chr&gt;          &lt;chr&gt;                  &lt;chr&gt;                 
+1 Wright… $10528         $10299                 97.82%                
+2 CallJa… $76694         $73521                 95.86%                
+3 Housto… $7033          $6733                  95.73%                
+4 Murphy… $1507          $1432                  95.02%                
+5 DevoeM… $10395         $9675                  93.07%                
+6 Miller… $245           $222                   90.59%                
+# ℹ abbreviated names: ¹​`Total from Small Donors`,
+#   ²​`Percent from Small Donors*`
+# ℹ 1 more variable: `total money raised` &lt;chr&gt;</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Vote_Share</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"data/Nominees-2024.csv"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>Nominee</span>, <span class='va'>Race</span>, <span class='va'>Type</span>, <span class='va'>Party</span>, <span class='va'>Votes</span>, <span class='va'>Share</span>, <span class='va'>Total</span><span class='op'>)</span></span>
+<span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>Vote_Share</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code># A tibble: 6 × 7
+  Nominee                 Race  Type  Party       Votes Share  Total
+  &lt;chr&gt;                   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+1 F. Barry Moore          AL-01 House Republican 258619 0.784 329854
+2 Thomas B. Holmes, Jr.   AL-01 House Democratic  70929 0.215 329854
+3 Caroleene Hardee Dobson AL-02 House Republican 131414 0.454 289674
+4 Shomari C. Figures      AL-02 House Democratic 158041 0.546 289674
+5 Michael D. Rogers       AL-03 House Republican 243848 0.979 249008
+6 Robert B. Aderholt      AL-04 House Republican 274498 0.988 277872</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Donations</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span></span>
+<span>    clean_name <span class='op'>=</span> <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_replace.html'>str_replace</a></span><span class='op'>(</span><span class='va'>Name</span>, <span class='st'>" \\(.\\)"</span>, <span class='st'>""</span><span class='op'>)</span>,</span>
+<span>    clean_name <span class='op'>=</span> <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_replace.html'>str_replace</a></span><span class='op'>(</span><span class='va'>clean_name</span>, <span class='st'>".* "</span>, <span class='st'>""</span><span class='op'>)</span>,</span>
+<span>    .before <span class='op'>=</span> <span class='va'>Name</span></span>
+<span>  <span class='op'>)</span> <span class='co'>#|&gt;</span></span></code></pre>
+</div>
+<pre><code># A tibble: 1,986 × 6
+   clean_name Name               `Total Raised` Total from Small Don…¹
+   &lt;chr&gt;      &lt;chr&gt;              &lt;chr&gt;          &lt;chr&gt;                 
+ 1 Wright     WrightChris Wrigh… $10528         $10299                
+ 2 Call       CallJason Call (3) $76694         $73521                
+ 3 Houston    HoustonDeric Hous… $7033          $6733                 
+ 4 Murphy     MurphyMike Murphy… $1507          $1432                 
+ 5 Sr.        DevoeMarion Devoe… $10395         $9675                 
+ 6 Miller     MillerConnor Mill… $245           $222                  
+ 7 Young      YoungRubin Young … $11294         $9866                 
+ 8 Martin     MartinIsaiah Mart… $380608        $322966               
+ 9 Girl       GirlMaebe A. Girl… $116191        $97376                
+10 Griffin    JamesBrandon Jame… $2999          $2389                 
+# ℹ 1,976 more rows
+# ℹ abbreviated name: ¹​`Total from Small Donors`
+# ℹ 2 more variables: `Percent from Small Donors*` &lt;chr&gt;,
+#   `total money raised` &lt;chr&gt;</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span> <span class='co'># write_csv("donation.csv")</span></span></code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Vote_Share</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>clean.name <span class='op'>=</span> <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_replace.html'>str_replace</a></span><span class='op'>(</span><span class='va'>Nominee</span>, <span class='st'>".* "</span>, <span class='st'>""</span><span class='op'>)</span>,</span>
+<span>         .before <span class='op'>=</span> <span class='va'>Nominee</span><span class='op'>)</span> <span class='co'>#|&gt;</span></span></code></pre>
+</div>
+<pre><code># A tibble: 1,231 × 8
+   clean.name Nominee            Race  Type  Party  Votes Share  Total
+   &lt;chr&gt;      &lt;chr&gt;              &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+ 1 Moore      F. Barry Moore     AL-01 House Repu… 258619 0.784 329854
+ 2 Jr.        Thomas B. Holmes,… AL-01 House Demo…  70929 0.215 329854
+ 3 Dobson     Caroleene Hardee … AL-02 House Repu… 131414 0.454 289674
+ 4 Figures    Shomari C. Figures AL-02 House Demo… 158041 0.546 289674
+ 5 Rogers     Michael D. Rogers  AL-03 House Repu… 243848 0.979 249008
+ 6 Aderholt   Robert B. Aderholt AL-04 House Repu… 274498 0.988 277872
+ 7 Strong     Dale W. Strong     AL-05 House Repu… 250322 0.954 262410
+ 8 Palmer     Gary J. Palmer     AL-06 House Repu… 243741 0.703 346625
+ 9 Anderson   Elizabeth A. Ande… AL-06 House Demo… 102504 0.296 346625
+10 Litaker    Dr. Robin A. Lita… AL-07 House Repu… 106312 0.363 293220
+# ℹ 1,221 more rows</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span>  <span class='co'>#write_csv("vote.csv")</span></span></code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Vote_Link</span> <span class='op'>&lt;-</span> <span class='va'>Vote_Share</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>inner_join</a></span><span class='op'>(</span><span class='va'>clean_Vote_Share</span><span class='op'>)</span></span>
+<span><span class='va'>Donation_Link</span> <span class='op'>&lt;-</span> <span class='va'>Donations</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>inner_join</a></span><span class='op'>(</span><span class='va'>clean_Donations</span><span class='op'>)</span></span>
+<span><span class='va'>Data</span> <span class='op'>&lt;-</span> <span class='va'>Donation_Link</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>inner_join</a></span><span class='op'>(</span><span class='va'>Vote_Link</span><span class='op'>)</span></span></code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Data</span> <span class='op'>&lt;-</span> <span class='va'>Data</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>Percent_Small_Donors <span class='op'>=</span> <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_replace.html'>str_replace</a></span><span class='op'>(</span><span class='va'>`Percent from Small Donors*`</span>,<span class='st'>"%"</span>,<span class='st'>""</span><span class='op'>)</span>, .before <span class='op'>=</span> <span class='va'>`total money raised`</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>Percent_Small_Donors <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>Percent_Small_Donors</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>`Total from Small Donors` <span class='op'>=</span> <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_replace.html'>str_replace</a></span><span class='op'>(</span><span class='va'>`Total from Small Donors`</span>, <span class='st'>"$"</span>,<span class='st'>""</span><span class='op'>)</span><span class='op'>)</span></span></code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Data</span> <span class='op'>&lt;-</span> <span class='va'>Data</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>PercentSmall <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span><span class='op'>(</span><span class='va'>Percent_Small_Donors</span> <span class='op'>&lt;</span> <span class='fl'>10</span> <span class='op'>~</span> <span class='st'>"1. Less than 10% from Small Donors"</span>,</span>
+<span>                                  <span class='va'>Percent_Small_Donors</span> <span class='op'>&gt;=</span> <span class='fl'>10</span> <span class='op'>&amp;</span> <span class='va'>Percent_Small_Donors</span> <span class='op'>&lt;</span> <span class='fl'>25</span> <span class='op'>~</span> <span class='st'>"2. Between 10% and 25% from Small Donors"</span>,</span>
+<span>                                  <span class='va'>Percent_Small_Donors</span> <span class='op'>&gt;=</span> <span class='fl'>25</span> <span class='op'>&amp;</span> <span class='va'>Percent_Small_Donors</span> <span class='op'>&lt;</span> <span class='fl'>50</span> <span class='op'>~</span> <span class='st'>"3. Between 25% and 50% from Small Donors"</span>,</span>
+<span>                                  <span class='va'>Percent_Small_Donors</span> <span class='op'>&gt;=</span> <span class='fl'>50</span> <span class='op'>&amp;</span> <span class='va'>Percent_Small_Donors</span> <span class='op'>&lt;</span> <span class='fl'>75</span> <span class='op'>~</span> <span class='st'>"4. Between 50% and 75% from Small Donors"</span>,</span>
+<span>                                  <span class='va'>Percent_Small_Donors</span> <span class='op'>&gt;=</span> <span class='fl'>75</span> <span class='op'>~</span> <span class='st'>"Over 75% from Small Donors"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span><span class='va'>Data</span></span></code></pre>
+</div>
+<pre><code># A tibble: 944 × 17
+   Name              `Total Raised` Total from Small Don…¹ Total_Small
+   &lt;chr&gt;             &lt;chr&gt;          &lt;chr&gt;                        &lt;int&gt;
+ 1 MurphyMike Murph… $1507          $1432                         1432
+ 2 JamesBrandon Jam… $2999          $2389                         2389
+ 3 MartinezTekesha … $607086        $477530                     477530
+ 4 CraigJames Craig… $136339        $104722                     104722
+ 5 WilsonTamie Wils… $2297407       $1764287                   1764287
+ 6 HarrisShawn Harr… $3521099       $2643282                   2643282
+ 7 WomerZach Womer … $140000        $104323                     104323
+ 8 ValimontGay Vali… $1570201       $1169688                   1169688
+ 9 PinkinsTy Pinkin… $1043829       $776394                     776394
+10 Al-AqidiDalia Al… $2207769       $1619067                   1619067
+# ℹ 934 more rows
+# ℹ abbreviated name: ¹​`Total from Small Donors`
+# ℹ 13 more variables: `Percent from Small Donors*` &lt;chr&gt;,
+#   Percent_Small_Donors &lt;int&gt;, `total money raised` &lt;chr&gt;,
+#   clean.name &lt;chr&gt;, Nominee &lt;chr&gt;, Race &lt;chr&gt;, Type &lt;chr&gt;,
+#   Party &lt;chr&gt;, Votes &lt;dbl&gt;, Share &lt;dbl&gt;, Total &lt;dbl&gt;,
+#   `Total Amount Raised` &lt;chr&gt;, PercentSmall &lt;chr&gt;</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='va'>Data</span>, <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>Percent_Small_Donors</span>,</span>
 <span>                 y <span class='op'>=</span> <span class='va'>Share</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
 <span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>color <span class='op'>=</span> <span class='va'>`Total Amount Raised`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> </span>
@@ -1559,9 +1694,9 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <span>       x <span class='op'>=</span> <span class='st'>"Percentage of Individual Donations less than $200"</span>,</span>
 <span>       y <span class='op'>=</span> <span class='st'>"Vote Share"</span><span class='op'>)</span></span></code></pre>
 </div>
-<p><img src="index_files/figure-html5/unnamed-chunk-11-1.png" alt="" width="624" /></p>
+<p><img src="index_files/figure-html5/unnamed-chunk-10-1.png" alt="" width="624" /></p>
 </div>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
