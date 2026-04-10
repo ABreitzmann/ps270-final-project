@@ -1550,38 +1550,6 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <p>Does size of donations impact a candidates electability? In this study, I plan to analyze the extent in which the percent of campaign donations from individuals under $200 influences the final election results. I hypothesize that a higher percent of small donations will result in a larger percent of the vote share. Those with a greater amount of smaller donations are better able to mobilize and attract a larger amount of individuals donating, whereas those with large donations focus more so on PACs and lobbying groups which can not cast a ballot when the time comes. My sample includes the House and Senate nominees from the 2024 Election. My explanatory variable is the percentage of total donations coming from donations of 200 dollars or less. The variable will be split into ranges of 25%. My outcome variable will be the average percentage of vote share. If a positive correlation is found between percentage of small donations and percent of vote share, this would support my hypothesis. However, if larger donations result in higher voteshare, than my hypothesis would be incorrect.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Donations</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"data/Large vs. Small Donations, Current General Election Candidates, 2024 Cycle.csv"</span><span class='op'>)</span></span>
-<span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>Donations</span><span class='op'>)</span></span></code></pre>
-</div>
-<pre><code># A tibble: 6 × 5
-  Name    `Total Raised` Total from Small Don…¹ Percent from Small D…²
-  &lt;chr&gt;   &lt;chr&gt;          &lt;chr&gt;                  &lt;chr&gt;                 
-1 Wright… $10528         $10299                 97.82%                
-2 CallJa… $76694         $73521                 95.86%                
-3 Housto… $7033          $6733                  95.73%                
-4 Murphy… $1507          $1432                  95.02%                
-5 DevoeM… $10395         $9675                  93.07%                
-6 Miller… $245           $222                   90.59%                
-# ℹ abbreviated names: ¹​`Total from Small Donors`,
-#   ²​`Percent from Small Donors*`
-# ℹ 1 more variable: `total money raised` &lt;chr&gt;</code></pre>
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Vote_Share</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"data/Nominees-2024.csv"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>Nominee</span>, <span class='va'>Race</span>, <span class='va'>Type</span>, <span class='va'>Party</span>, <span class='va'>Votes</span>, <span class='va'>Share</span>, <span class='va'>Total</span><span class='op'>)</span></span>
-<span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>Vote_Share</span><span class='op'>)</span></span></code></pre>
-</div>
-<pre><code># A tibble: 6 × 7
-  Nominee                 Race  Type  Party       Votes Share  Total
-  &lt;chr&gt;                   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
-1 F. Barry Moore          AL-01 House Republican 258619 0.784 329854
-2 Thomas B. Holmes, Jr.   AL-01 House Democratic  70929 0.215 329854
-3 Caroleene Hardee Dobson AL-02 House Republican 131414 0.454 289674
-4 Shomari C. Figures      AL-02 House Democratic 158041 0.546 289674
-5 Michael D. Rogers       AL-03 House Republican 243848 0.979 249008
-6 Robert B. Aderholt      AL-04 House Republican 274498 0.988 277872</code></pre>
-</div>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Donations</span> <span class='op'>|&gt;</span></span>
 <span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span></span>
 <span>    clean_name <span class='op'>=</span> <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_replace.html'>str_replace</a></span><span class='op'>(</span><span class='va'>Name</span>, <span class='st'>" \\(.\\)"</span>, <span class='st'>""</span><span class='op'>)</span>,</span>
@@ -1654,49 +1622,84 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Data</span> <span class='op'>&lt;-</span> <span class='va'>Data</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>PercentSmall <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span><span class='op'>(</span><span class='va'>Percent_Small_Donors</span> <span class='op'>&lt;</span> <span class='fl'>10</span> <span class='op'>~</span> <span class='st'>"1. Less than 10% from Small Donors"</span>,</span>
-<span>                                  <span class='va'>Percent_Small_Donors</span> <span class='op'>&gt;=</span> <span class='fl'>10</span> <span class='op'>&amp;</span> <span class='va'>Percent_Small_Donors</span> <span class='op'>&lt;</span> <span class='fl'>25</span> <span class='op'>~</span> <span class='st'>"2. Between 10% and 25% from Small Donors"</span>,</span>
-<span>                                  <span class='va'>Percent_Small_Donors</span> <span class='op'>&gt;=</span> <span class='fl'>25</span> <span class='op'>&amp;</span> <span class='va'>Percent_Small_Donors</span> <span class='op'>&lt;</span> <span class='fl'>50</span> <span class='op'>~</span> <span class='st'>"3. Between 25% and 50% from Small Donors"</span>,</span>
-<span>                                  <span class='va'>Percent_Small_Donors</span> <span class='op'>&gt;=</span> <span class='fl'>50</span> <span class='op'>&amp;</span> <span class='va'>Percent_Small_Donors</span> <span class='op'>&lt;</span> <span class='fl'>75</span> <span class='op'>~</span> <span class='st'>"4. Between 50% and 75% from Small Donors"</span>,</span>
-<span>                                  <span class='va'>Percent_Small_Donors</span> <span class='op'>&gt;=</span> <span class='fl'>75</span> <span class='op'>~</span> <span class='st'>"Over 75% from Small Donors"</span><span class='op'>)</span><span class='op'>)</span></span>
-<span><span class='va'>Data</span></span></code></pre>
-</div>
-<pre><code># A tibble: 944 × 17
-   Name              `Total Raised` Total from Small Don…¹ Total_Small
-   &lt;chr&gt;             &lt;chr&gt;          &lt;chr&gt;                        &lt;int&gt;
- 1 MurphyMike Murph… $1507          $1432                         1432
- 2 JamesBrandon Jam… $2999          $2389                         2389
- 3 MartinezTekesha … $607086        $477530                     477530
- 4 CraigJames Craig… $136339        $104722                     104722
- 5 WilsonTamie Wils… $2297407       $1764287                   1764287
- 6 HarrisShawn Harr… $3521099       $2643282                   2643282
- 7 WomerZach Womer … $140000        $104323                     104323
- 8 ValimontGay Vali… $1570201       $1169688                   1169688
- 9 PinkinsTy Pinkin… $1043829       $776394                     776394
-10 Al-AqidiDalia Al… $2207769       $1619067                   1619067
-# ℹ 934 more rows
-# ℹ abbreviated name: ¹​`Total from Small Donors`
-# ℹ 13 more variables: `Percent from Small Donors*` &lt;chr&gt;,
-#   Percent_Small_Donors &lt;int&gt;, `total money raised` &lt;chr&gt;,
-#   clean.name &lt;chr&gt;, Nominee &lt;chr&gt;, Race &lt;chr&gt;, Type &lt;chr&gt;,
-#   Party &lt;chr&gt;, Votes &lt;dbl&gt;, Share &lt;dbl&gt;, Total &lt;dbl&gt;,
-#   `Total Amount Raised` &lt;chr&gt;, PercentSmall &lt;chr&gt;</code></pre>
-</div>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='va'>Data</span>, <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>Percent_Small_Donors</span>,</span>
-<span>                 y <span class='op'>=</span> <span class='va'>Share</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>                 y <span class='op'>=</span> <span class='va'>Share_perc</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
 <span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>color <span class='op'>=</span> <span class='va'>`Total Amount Raised`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> </span>
 <span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_smooth.html'>geom_smooth</a></span><span class='op'>(</span>method <span class='op'>=</span> <span class='st'>"lm"</span><span class='op'>)</span> <span class='op'>+</span></span>
 <span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_continuous.html'>scale_x_sqrt</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
 <span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>title <span class='op'>=</span> <span class='st'>"Relationship between Vote Share and Percentage of Small Donations"</span>,</span>
 <span>       x <span class='op'>=</span> <span class='st'>"Percentage of Individual Donations less than $200"</span>,</span>
-<span>       y <span class='op'>=</span> <span class='st'>"Vote Share"</span><span class='op'>)</span></span></code></pre>
+<span>       y <span class='op'>=</span> <span class='st'>"Percentage of Vote Share"</span><span class='op'>)</span></span></code></pre>
 </div>
 <p><img src="index_files/figure-html5/unnamed-chunk-10-1.png" alt="" width="624" /></p>
 </div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Regression</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='op'>(</span><span class='va'>Share</span><span class='op'>*</span><span class='fl'>100</span><span class='op'>)</span> <span class='op'>~</span> <span class='va'>Percent_Small_Donors</span> <span class='op'>+</span> <span class='va'>Total_Small_tenthousand</span>, data <span class='op'>=</span> <span class='va'>Data</span><span class='op'>)</span></span>
+<span><span class='va'>Regression_sum</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://generics.r-lib.org/reference/glance.html'>glance</a></span><span class='op'>(</span><span class='va'>Regression</span><span class='op'>)</span></span>
+<span><span class='va'>Regression</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://generics.r-lib.org/reference/tidy.html'>tidy</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>adj.r.squared <span class='op'>=</span> <span class='va'>Regression_sum</span><span class='op'>$</span><span class='va'>adj.r.squared</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>Coefficients <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span><span class='op'>(</span><span class='va'>term</span> <span class='op'>==</span> <span class='st'>"(Intercept)"</span> <span class='op'>~</span> <span class='st'>"Intercept"</span>,</span>
+<span>                          <span class='va'>term</span> <span class='op'>==</span> <span class='st'>"Percent_Small_Donors"</span> <span class='op'>~</span> <span class='st'>"Percentage of Individual Donations less than $200"</span>,</span>
+<span>                          <span class='va'>term</span> <span class='op'>==</span> <span class='st'>"Total_Small_tenthousand"</span> <span class='op'>~</span> <span class='st'>"Total Amount Raised (ten thousands)"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>Coefficients</span>, <span class='va'>estimate</span>, <span class='va'>std.error</span>, <span class='va'>adj.r.squared</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class='op'>(</span><span class='op'>)</span></span></code></pre>
+</div>
+<table>
+<colgroup>
+<col style="width: 59%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Coefficients</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">adj.r.squared</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Intercept</td>
+<td style="text-align: right;">52.365459</td>
+<td style="text-align: right;">0.9235625</td>
+<td style="text-align: right;">0.0745947</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Percentage of Individual Donations less than $200</td>
+<td style="text-align: right;">-0.346450</td>
+<td style="text-align: right;">0.0393588</td>
+<td style="text-align: right;">0.0745947</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Total Amount Raised (ten thousands)</td>
+<td style="text-align: right;">0.005344</td>
+<td style="text-align: right;">0.0018787</td>
+<td style="text-align: right;">0.0745947</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Regression</span></span></code></pre>
+</div>
+<pre><code>
+Call:
+lm(formula = (Share * 100) ~ Percent_Small_Donors + Total_Small_tenthousand, 
+    data = Data)
+
+Coefficients:
+            (Intercept)     Percent_Small_Donors  
+              52.365459                -0.346450  
+Total_Small_tenthousand  
+               0.005344  </code></pre>
+</div>
+<p>When a Candidate receives 0% of the Vote Share, it is predicted the Candidate will receive 52.37% of the Vote Share. When the total amount raised remains constant, it is estimated that for every additional percentage point of donations of less than $200, the candidate will lose 0.35 percentage points of the Vote Share. However, with an adjusted R^2 value of 0.075, only 7.5% of the variance is explained by the model, meaning the linear regression has a poor model fit and very little correlation between Vote Share and Percentage of Individual Donations under 200 dollars</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

@@ -19,10 +19,11 @@ Does size of donations impact a candidates electability? In this study, I plan t
 
 ```{r include = FALSE}
 library(tidyverse)
+library(broom)
 ```
 
 
-```{r}
+```{r include = FALSE}
 Donations <- read_csv("data/Large vs. Small Donations, Current General Election Candidates, 2024 Cycle.csv")
 head(Donations)
 Vote_Share <- read_csv("data/Nominees-2024.csv") |>
@@ -78,10 +79,12 @@ Data <- Data |>
   mutate(`Total Amount Raised` = case_when(Total_Small < 10000 ~ "1. Less Than $10,000 Raised",
                                    Total_Small > 10000 & Total_Small < 100000 ~ "2. Between $10,000 and $100,000 Raised",
                                    Total_Small > 50000 & Total_Small < 10000000 ~ "3. Between $100,000 and $1,000,000 Raised",
-                                   Total_Small > 1000000 ~ "4. Over $1,000,000 Raised"))
+                                   Total_Small > 1000000 ~ "4. Over $1,000,000 Raised")) |>
+  mutate(Total_Small_tenthousand = Total_Small/10000,
+         Share_perc = Share*100)
 ```
 
-```{r}
+```{r include = FALSE}
 Data <- Data |>
   mutate(PercentSmall = case_when(Percent_Small_Donors < 10 ~ "1. Less than 10% from Small Donors",
                                   Percent_Small_Donors >= 10 & Percent_Small_Donors < 25 ~ "2. Between 10% and 25% from Small Donors",
@@ -95,13 +98,32 @@ Data
 
 ```{r}
 ggplot(Data, aes(x = Percent_Small_Donors,
-                 y = Share)) +
+                 y = Share_perc)) +
   geom_point(aes(color = `Total Amount Raised`)) + 
   geom_smooth(method = "lm") +
   scale_x_sqrt() +
   labs(title = "Relationship between Vote Share and Percentage of Small Donations",
        x = "Percentage of Individual Donations less than $200",
-       y = "Vote Share")
+       y = "Percentage of Vote Share")
+```
+
+```{r}
+Regression <- lm((Share*100) ~ Percent_Small_Donors + Total_Small_tenthousand, data = Data)
+Regression_sum <- glance(Regression)
+Regression |>
+  tidy() |>
+  mutate(adj.r.squared = Regression_sum$adj.r.squared) |>
+   mutate(Coefficients = case_when(term == "(Intercept)" ~ "Intercept",
+                          term == "Percent_Small_Donors" ~ "Percentage of Individual Donations less than $200",
+                          term == "Total_Small_tenthousand" ~ "Total Amount Raised (ten thousands)")) |>
+   select(Coefficients, estimate, std.error, adj.r.squared) |>
+  knitr::kable()
+  
+```
+
+```{r}
+Regression
 ```
 
 
+When a Candidate receives 0% of the Vote Share, it is predicted the Candidate will receive 52.37% of the Vote Share. When the total amount raised remains constant, it is estimated that for every additional percentage point of donations of less than $200, the candidate will lose 0.35 percentage points of the Vote Share. However, with an adjusted R^2 value of 0.075, only 7.5% of the variance is explained by the model, meaning the linear regression has a poor model fit and very little correlation between Vote Share and Percentage of Individual Donations under 200 dollars
