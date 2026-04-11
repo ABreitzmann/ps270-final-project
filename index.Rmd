@@ -108,7 +108,7 @@ ggplot(Data, aes(x = Percent_Small_Donors,
 ```
 
 ```{r}
-Regression <- lm((Share*100) ~ Percent_Small_Donors + Total_Small_tenthousand, data = Data)
+Regression <- lm((Share_perc) ~ Percent_Small_Donors + Total_Small_tenthousand, data = Data)
 Regression_sum <- glance(Regression)
 Regression |>
   tidy() |>
@@ -121,9 +121,6 @@ Regression |>
   
 ```
 
-```{r}
-Regression
-```
 
 
-When a Candidate receives 0% of the Vote Share, it is predicted the Candidate will receive 52.37% of the Vote Share. When the total amount raised remains constant, it is estimated that for every additional percentage point of donations of less than $200, the candidate will lose 0.35 percentage points of the Vote Share. However, with an adjusted R^2 value of 0.075, only 7.5% of the variance is explained by the model, meaning the linear regression has a poor model fit and very little correlation between Vote Share and Percentage of Individual Donations under 200 dollars
+When a Candidate receives 0% of the Vote Share, it is predicted the Candidate will receive 52.37% of the Vote Share. When the total amount raised remains constant, it is estimated that for every additional percentage point of donations of less than $200, the candidate will lose 0.35 percentage points of the Vote Share. However, with an adjusted R^2 value of 0.075, only 7.5% of the variance is explained by the model, meaning the linear regression has a poor model fit and very little correlation exists between Vote Share and Percentage of Individual Donations under 200 dollars
