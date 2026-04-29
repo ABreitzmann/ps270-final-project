@@ -31,14 +31,6 @@ Using Data collected by ***Open Secrets***, a 501(c)(3) organization focused on 
 #### Outcome Variable: Vote Share
 Vote Share is the percentage of the total vote each candidate received during their race on the November 5th, 2024 election. 
 
-#### Statistical Control: Total Amount Raised
-A possible confounder in this study is the total amount of money raised, as it could drastically shift percentages and result in more campaigning to increase the vote share. In order to account for this, the total amount raised data from ***Open Secrets *** will be kept as a constant in the linear regression to isolate the percentage of individual small donations. 
-
-#### Statistical Control: Total Amount of Small Donations
-A possible confounder in this study is the total amount of small donations recieved during the campaign cycle. In order to account for this, the total amount of donations under $200 will be kept as a constant in the linear regression to isolate the percentage of individual small donations
-
-### Critera for rejecting null Hypothesis
-The α for this study is set to 0.01, meaning in order to reject the null hypothesis that the percentage of individual donations under $200 makes no difference in a candidates vote share, the p-value must be found to be under 0.01.
 
 
 ```{r include = FALSE}
@@ -132,6 +124,14 @@ Data |>
   theme_minimal()
   
 ```
+#### Statistical Control: Total Amount Raised
+A possible confounder in this study is the total amount of money raised, as it could drastically shift percentages and result in more campaigning to increase the vote share. In order to account for this, the total amount raised data from ***Open Secrets *** will be kept as a constant in the linear regression to isolate the percentage of individual small donations. 
+
+#### Statistical Control: Total Amount of Small Donations
+A possible confounder in this study is the total amount of small donations recieved during the campaign cycle. In order to account for this, the total amount of donations under $200 will be kept as a constant in the linear regression to isolate the percentage of individual small donations
+
+### Critera for rejecting null Hypothesis
+The α for this study is set to 0.01, meaning in order to reject the null hypothesis that the percentage of individual donations under $200 makes no difference in a candidates vote share, the p-value must be found to be under 0.01.
 
 ## Results
 

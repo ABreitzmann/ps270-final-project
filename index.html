@@ -1556,15 +1556,15 @@ The variables of interest in this study is Percentage of Donations under $200, V
 <p>Using Data collected by <strong><em>Open Secrets</em></strong>, a 501(c)(3) organization focused on tracking data related to politics, the explanatory variable is the percentage of donations from small donors during the 2024 campaign, meaning individuals who donate less than $200.</p>
 <h4 id="outcome-variable-vote-share">Outcome Variable: Vote Share</h4>
 <p>Vote Share is the percentage of the total vote each candidate received during their race on the November 5th, 2024 election.</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="index_files/figure-html5/unnamed-chunk-10-1.png" alt="" width="624" /></p>
+</div>
 <h4 id="statistical-control-total-amount-raised">Statistical Control: Total Amount Raised</h4>
 <p>A possible confounder in this study is the total amount of money raised, as it could drastically shift percentages and result in more campaigning to increase the vote share. In order to account for this, the total amount raised data from <strong><em>Open Secrets </em></strong> will be kept as a constant in the linear regression to isolate the percentage of individual small donations.</p>
 <h4 id="statistical-control-total-amount-of-small-donations">Statistical Control: Total Amount of Small Donations</h4>
 <p>A possible confounder in this study is the total amount of small donations recieved during the campaign cycle. In order to account for this, the total amount of donations under $200 will be kept as a constant in the linear regression to isolate the percentage of individual small donations</p>
 <h3 id="critera-for-rejecting-null-hypothesis">Critera for rejecting null Hypothesis</h3>
 <p>The α for this study is set to 0.01, meaning in order to reject the null hypothesis that the percentage of individual donations under $200 makes no difference in a candidates vote share, the p-value must be found to be under 0.01.</p>
-<div class="layout-chunk" data-layout="l-body">
-<p><img src="index_files/figure-html5/unnamed-chunk-10-1.png" alt="" width="624" /></p>
-</div>
 <h2 id="results">Results</h2>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="index_files/figure-html5/unnamed-chunk-11-1.png" alt="" width="624" /></p>
