@@ -16,7 +16,8 @@ Every election season, candidates ask not just for votes, but for donations. The
 ***Research Question: Does the size of donation impact the electability of candidates?***
 
 The Null Hypothesis for this study is the percentage of individual donations under $200 makes no impact on a candidate's electibility. 
-The Alternate Hypothsis, meanwhile, is that there is a statistically significant difference in electability depending on the percentage of individual donations under 200 dollars.
+
+The Alternate Hypothesis, meanwhile, is that there is a statistically significant difference in electability depending on the percentage of individual donations under 200 dollars.
 
 
 ## Data
