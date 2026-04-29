@@ -1,21 +1,44 @@
 ---
-title: "PS270 Final Project"
+title: "Research Project"
 author: "Allison Breitzmann"
-description: "My Final Project"
+description: "Analyzing the extent to which size of donation impact the electability of candidates"
 output:
   distill::distill_article:
     self_contained: false
 ---
 
 
+## Introduction
 
-## Project thoughts
+Every election season, candidates ask not just for votes, but for donations. The ability to fundraise is critical towards a candidacy succeeding. However, there are two major avenues a campaign can take to raise money: grassroots through many small donations, or emphasis on fewer, large donations. Determining which strategy is more effective is important towards the direction campaigns should pursue for thier best chances of being elected. This study explores the impact the size of donation has on the candidate's final Vote Share. Specifically, using the 2024 House and Senate Races, I plan to analyze the extent in which the percent of campaign donations from individuals under $200 influences the final election results. 
 
-I am interested in exploring data related to campaign financing, specifically where the money comes from and its relation to electability. Either in terms of ideology of those donations or the size of the donation themselves.
 
-Research Question: How does the size of donation impact the electability of candidates?
+***Research Question: Does the size of donation impact the electability of candidates?***
 
-Does size of donations impact a candidates electability? In this study, I plan to analyze the extent in which the percent of campaign donations from individuals under $200 influences the final election results. I hypothesize that a higher percent of small donations will result in a larger percent of the vote share. Those with a greater amount of smaller donations are better able to mobilize and attract a larger amount of individuals donating, whereas those with large donations focus more so on PACs and lobbying groups which can not cast a ballot when the time comes. My sample includes the House and Senate nominees from the 2024 Election. My explanatory variable is the percentage of total donations coming from donations of 200 dollars or less. The variable will be split into ranges of 25%. My outcome variable will be the average percentage of vote share. If a positive correlation is found between percentage of small donations and percent of vote share, this would support my hypothesis. However, if larger donations result in higher voteshare, than my hypothesis would be incorrect.
+The Null Hypothesis for this study is the percentage of individual donations under $200 makes no impact on a candidate's electibility. 
+The Alternate Hypothsis, meanwhile, is that there is a statistically significant difference in electability depending on the percentage of individual donations under 200 dollars.
+
+
+## Data
+
+This study uses a cross-sectional design of House and Senate candidates during the 2024 Presidential Election. 
+The variables of interest in this study is Percentage of Donations under $200, Vote Share, and Total Amount Raised
+
+#### Predictor: Percentage from Small Donors
+Using Data collected by ***Open Secrets***, a 501(c)(3) organization focused on tracking data related to politics, the explanatory variable is the percentage of donations from small donors during the 2024 campaign, meaning individuals who donate less than $200. 
+
+#### Outcome Variable: Vote Share
+Vote Share is the percentage of the total vote each candidate received during their race on the November 5th, 2024 election. 
+
+#### Statistical Control: Total Amount Raised
+A possible confounder in this study is the total amount of money raised, as it could drastically shift percentages and result in more campaigning to increase the vote share. In order to account for this, the total amount raised data from ***Open Secrets *** will be kept as a constant in the linear regression to isolate the percentage of individual small donations. 
+
+#### Statistical Control: Total Amount of Small Donations
+A possible confounder in this study is the total amount of small donations recieved during the campaign cycle. In order to account for this, the total amount of donations under $200 will be kept as a constant in the linear regression to isolate the percentage of individual small donations
+
+### Critera for rejecting null Hypothesis
+The α for this study is set to 0.01, meaning in order to reject the null hypothesis that the percentage of individual donations under $200 makes no difference in a candidates vote share, the p-value must be found to be under 0.01.
+
 
 ```{r include = FALSE}
 library(tidyverse)
@@ -34,7 +57,7 @@ head(Vote_Share)
 
 
 
-```{r}
+```{r include = FALSE}
 Donations |>
   mutate(
     clean_name = str_replace(Name, " \\(.\\)", ""),
@@ -44,7 +67,7 @@ Donations |>
  # write_csv("donation.csv")
 ```
 
-```{r}
+```{r include = FALSE}
 Vote_Share |>
   mutate(clean.name = str_replace(Nominee, ".* ", ""),
          .before = Nominee) #|>
@@ -56,7 +79,7 @@ clean_Donations <- read_csv("donation.csv")
 clean_Vote_Share <- read_csv("vote.csv")
 ```
 
-```{r}
+```{r include = FALSE}
 Vote_Link <- Vote_Share |>
   inner_join(clean_Vote_Share)
 Donation_Link <- Donations |>
@@ -64,7 +87,7 @@ Donation_Link <- Donations |>
 Data <- Donation_Link |>
   inner_join(Vote_Link)
 ```
-```{r}
+```{r include = FALSE}
 Data <- Data |>
   mutate(Percent_Small_Donors = str_replace(`Percent from Small Donors*`,"%",""), .before = `total money raised`) |>
   mutate(Percent_Small_Donors = as.integer(Percent_Small_Donors)) |>
@@ -75,13 +98,17 @@ Data <- Data |>
 ```{r include = FALSE}
 Data <- Data |>
   mutate(Total_Small = str_replace(`Total from Small Donors`, "\\$", ""), .after = `Total from Small Donors` ) |>
-  mutate(Total_Small = as.integer(Total_Small)) |>
-  mutate(`Total Amount Raised` = case_when(Total_Small < 10000 ~ "1. Less Than $10,000 Raised",
-                                   Total_Small > 10000 & Total_Small < 100000 ~ "2. Between $10,000 and $100,000 Raised",
-                                   Total_Small > 50000 & Total_Small < 10000000 ~ "3. Between $100,000 and $1,000,000 Raised",
-                                   Total_Small > 1000000 ~ "4. Over $1,000,000 Raised")) |>
+  mutate(Total_Small = as.integer(Total_Small),
+         Total_number = as.integer(Total)) |>
+  mutate(`Total Amount Raised` = case_when(Total_number < 250000 ~ "1. Less Than $250,000 Raised",
+                                   Total_number > 250000 & Total_number < 400000 ~ "2. Between $250,000 and $400,000 Raised",
+                                   Total_number > 400000 & Total_number < 650000 ~ "3. Between $400,000 and $650,000 Raised",
+                                   Total_number > 650000 & Total_number < 750000 ~ "3. Between $650,000 and $800,000 Raised",
+                                   Total_number > 800000 & Total_number < 1000000 ~ "3. Between $800,000 and $1,000,000 Raised",
+                                   Total_number > 1000000 ~ "4. Over $1,000,000 Raised")) |>
   mutate(Total_Small_tenthousand = Total_Small/10000,
-         Share_perc = Share*100)
+         Share_perc = Share*100) |>
+  mutate(Total_num_tenthousand = Total_number/10000)
 ```
 
 ```{r include = FALSE}
@@ -94,9 +121,20 @@ Data <- Data |>
 Data
 ```
 
+```{r echo =FALSE}
+Data |>
+  ggplot(aes(x = Share_perc)) +
+  geom_histogram(fill = "darkgreen", alpha = 0.7) +
+  labs(title = "Frequency of Candidate's Vote Percentage",
+       x = "Candidate's Vote Share",
+       y = "Frequency") +
+  theme_minimal()
+  
+```
 
+## Results
 
-```{r}
+```{r echo = FALSE}
 ggplot(Data, aes(x = Percent_Small_Donors,
                  y = Share_perc)) +
   geom_point(aes(color = `Total Amount Raised`)) + 
@@ -104,23 +142,67 @@ ggplot(Data, aes(x = Percent_Small_Donors,
   scale_x_sqrt() +
   labs(title = "Relationship between Vote Share and Percentage of Small Donations",
        x = "Percentage of Individual Donations less than $200",
-       y = "Percentage of Vote Share")
+       y = "Percentage of Vote Share") +
+  theme_minimal()
 ```
+### Linear Regression
 
-```{r}
-Regression <- lm((Share_perc) ~ Percent_Small_Donors + Total_Small_tenthousand, data = Data)
-Regression_sum <- glance(Regression)
-Regression |>
+
+```{r echo = FALSE}
+Regression_multi <- lm((Share_perc) ~ Percent_Small_Donors + Total_Small_tenthousand + Total_num_tenthousand, data = Data)
+Regression <- lm((Share_perc) ~ Percent_Small_Donors, data = Data)
+Regression_total <- lm(Share_perc ~ Percent_Small_Donors + Total_num_tenthousand, data = Data)
+Regression_sum <- glance(Regression_multi)
+Regression_multi |>
   tidy() |>
   mutate(adj.r.squared = Regression_sum$adj.r.squared) |>
    mutate(Coefficients = case_when(term == "(Intercept)" ~ "Intercept",
                           term == "Percent_Small_Donors" ~ "Percentage of Individual Donations less than $200",
-                          term == "Total_Small_tenthousand" ~ "Total Amount Raised (ten thousands)")) |>
-   select(Coefficients, estimate, std.error, adj.r.squared) |>
-  knitr::kable()
+                          term == "Total_Small_tenthousand" ~ "Total Amount of Small Donations Raised (ten thousands)",
+                          term == "Total_num_tenthousand" ~ "Total Amount Raised (ten thousands)"),
+          Estimate = estimate,
+          "Adjusted R^2" = adj.r.squared,
+          "Standard Error" = std.error,
+          "p-value" = p.value) |>
+  select(Coefficients, Estimate, `Adjusted R^2`, `Standard Error`, `p-value`) |>
+ knitr::kable(digits = 3)
   
+```
+
+### Regression Table
+```{r echo = FALSE}
+library(modelsummary)
+var_labels <- c(
+  Percent_Small_Donors = "Percentage of Small Donors",
+  Total_num_tenthousand = "Total Amount Raised (ten thousands)",
+  Total_Small_tenthousand = "Total Amount of Donations under $200"
+)
+modelsummary::modelsummary(list(Regression, Regression_total, Regression_multi), 
+                           coef_map = var_labels, 
+                           gof_map = c("nobs", "r.squared","adj.r.squared"), stars = TRUE)
 ```
 
 
 
-When a Candidate receives 0% of the Vote Share, it is predicted the Candidate will receive 52.37% of the Vote Share. When the total amount raised remains constant, it is estimated that for every additional percentage point of donations of less than $200, the candidate will lose 0.35 percentage points of the Vote Share. However, with an adjusted R^2 value of 0.075, only 7.5% of the variance is explained by the model, meaning the linear regression has a poor model fit and very little correlation exists between Vote Share and Percentage of Individual Donations under 200 dollars. Because of this, the size of donation does not meaningfully impact the electibility of candidates. 
+When a Candidate receives 0% of the Vote Share, it is predicted the Candidate will receive 53.667% of the Vote Share. When the total amount raised and total amount of small donations received remains constant, it is estimated that for every additional percentage point of total donations less than $200, the candidate will lose 0.346 percentage points of the Vote Share. With a p-value that rounds to 0, the null hypothesis can be rejected, demonstrating a statistically significant relationship between the percentage of individual donations under 200 dollars and a candidate's vote share. 
+
+With that being said, with an adjusted R^2 value of 0.1, only 10% of the variance is explained by the model. This means there is likely another factor influencing the outcome.However, this does not mean an association between vote share and percentage of donations under $200 does not exist. 
+
+
+
+
+## Conclusion
+
+Ultimately, using data from Open Secrets and the final 2024 election results for the House and Senate Candidates,it was found that when controlling for total amount raised and total amount raised from 'small' donors, the percentage of donations under $200 negatively correlates to a candidate's vote Share. Using a 99% Confidence Interval, the null hypothesis can be rejected, demonstrating a statistically significant relationship. 
+
+### Limitations
+
+Limitations of the results are missing data. This analysis only includes the 2024 Presidential Election and compares every candidate across the United States. If this were to repeated, the inclusion of other years, particularly midterms and local elections, would improve the validatity of the findings. Additionally, this study does not take into account the candidates direct competition. Since the candidates are competing independently of the majority of candidates, the amount of the vote a candidate wins is relative to their competition. Comparing a candidate's vote share when the opponents funding remains constant would futher explore and strengthen the implications of the results. 
+
+
+
+## Code Printout
+
+```{r print-code, ref.label=knitr::all_labels(), echo = TRUE, eval=FALSE}
+
+```
