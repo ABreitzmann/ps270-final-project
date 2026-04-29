@@ -23,7 +23,7 @@ The Alternate Hypothesis, meanwhile, is that there is a statistically significan
 ## Data
 
 This study uses a cross-sectional design of House and Senate candidates during the 2024 Presidential Election. 
-The variables of interest in this study is Percentage of Donations under $200, Vote Share, and Total Amount Raised
+The variables of interest in this study is Percentage of Donations under $200, Vote Share, Total Amount Raised, and Total amount of Small Donations
 
 #### Predictor: Percentage from Small Donors
 Using Data collected by ***Open Secrets***, a 501(c)(3) organization focused on tracking data related to politics, the explanatory variable is the percentage of donations from small donors during the 2024 campaign, meaning individuals who donate less than $200. 
